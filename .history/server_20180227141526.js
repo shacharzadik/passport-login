@@ -1,4 +1,5 @@
-// Server with login example passport local
+
+
 
 // Get dependencies
 const express = require('express');
@@ -8,20 +9,12 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const app = express();
 const LocalStrategy = require('passport-local').Strategy;
-var expressSession = require('express-session');
-
-
 
 // Parsers for POST data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 //Authentication middleware
-app.use(expressSession({ secret: 'thisIsASecret', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
-app.use(passport.session());
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
 
 // Point static path to dist
 app.use(express.static(path.join(__dirname, 'dist')));
@@ -35,7 +28,8 @@ app.get('/login', (req, res) => {
 
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/login?err'
+  failureRedirect: '/login?err',
+  session: false
 }));
 
 passport.use(new LocalStrategy(function(username, password, done) {
